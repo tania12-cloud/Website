@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Update Comment</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <h1>Update Comment</h1>
+    <form th:action="@{/comments/{id}/update(id=${comment.id})}" th:object="${comment}" method="post" class="form-group">
+        <label>Text:</label>
+        <input type="text" th:field="*{text}" class="form-control"/>
+        <label>User:</label>
+        <select th:field="*{user}" class="form-control">
+            <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.username}">User</option>
+        </select>
+        <label>Task:</label>
+        <select th:field="*{task}" class="form-control">
+            <option th:each="task : ${tasks}" th:value="${task.id}" th:text="${task.title}">Task</option>
+        </select>
+        <button type="submit" class="btn btn-primary">Update</button>
+    </form>
+</div>
+</body>
+</html>
+
