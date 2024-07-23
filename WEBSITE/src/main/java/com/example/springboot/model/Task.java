@@ -1,19 +1,11 @@
 package com.example.springboot.model;
 
+import jakarta.persistence.*;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Set;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 public class Task {
@@ -25,81 +17,114 @@ public class Task {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(nullable = false)
     private String body;
 
-    @Column(name = "due_date")
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private TaskStatus status;
+
+    @Column(nullable = false)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dueDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "assignee_id")
     private User assignee;
 
-    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Comment> comments = new HashSet<>();
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<Comment> comments;
+    
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<Attachment> attachments;
 
-    // Constructors, getters, and setters
+	public Task(Long id, String title, String body, TaskStatus status, LocalDate dueDate, User assignee,
+			Set<Comment> comments, Set<Attachment> attachments) {
+		super();
+		this.id = id;
+		this.title = title;
+		this.body = body;
+		this.status = status;
+		this.dueDate = dueDate;
+		this.assignee = assignee;
+		this.comments = comments;
+		this.attachments = attachments;
+	}
 
-    public Task() {
-    }
+	public Task() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 
-    public Task(String title, String body, LocalDate dueDate, User assignee) {
-        this.title = title;
-        this.body = body;
-        this.dueDate = dueDate;
-        this.assignee = assignee;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    // Getters and setters
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public String getTitle() {
+		return title;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
-    public String getTitle() {
-        return title;
-    }
+	public String getBody() {
+		return body;
+	}
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+	public void setBody(String body) {
+		this.body = body;
+	}
 
-    public String getBody() {
-        return body;
-    }
+	public TaskStatus getStatus() {
+		return status;
+	}
 
-    public void setBody(String body) {
-        this.body = body;
-    }
+	public void setStatus(TaskStatus status) {
+		this.status = status;
+	}
 
-    public LocalDate getDueDate() {
-        return dueDate;
-    }
+	public LocalDate getDueDate() {
+		return dueDate;
+	}
 
-    public void setDueDate(LocalDate dueDate) {
-        this.dueDate = dueDate;
-    }
+	public void setDueDate(LocalDate dueDate) {
+		this.dueDate = dueDate;
+	}
 
-    public User getAssignee() {
-        return assignee;
-    }
+	public User getAssignee() {
+		return assignee;
+	}
 
-    public void setAssignee(User assignee) {
-        this.assignee = assignee;
-    }
+	public void setAssignee(User assignee) {
+		this.assignee = assignee;
+	}
 
-    public Set<Comment> getComments() {
-        return comments;
-    }
+	public Set<Comment> getComments() {
+		return comments;
+	}
 
-    public void setComments(Set<Comment> comments) {
-        this.comments = comments;
-    }
+	public Set<Attachment> getAttachments() {
+		return attachments;
+	}
+
+	public void setAttachments(Set<Attachment> attachments) {
+		this.attachments = attachments;
+	}
+
+	public void setComments(Set<Comment> comments) {
+		this.comments = comments;
+	}
+
+	@Override
+	public String toString() {
+		return "Task [id=" + id + ", title=" + title + ", body=" + body + ", status=" + status + ", dueDate=" + dueDate
+				+ ", assignee=" + assignee + ", comments=" + comments + ", attachments=" + attachments + "]";
+	}
+    
+   
 }
-
-
-

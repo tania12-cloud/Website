@@ -20,23 +20,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/register")
-    public String showRegistrationForm(Model model) {
-        model.addAttribute("user", new User());
-        return "register";
-    }
-
-    @PostMapping("/register")
-    public String registerUser(@ModelAttribute User user) {
-        userService.createUser(user);
-        return "redirect:/users/login";
-    }
-
-    @GetMapping("/login")
-    public String showLoginForm() {
-        return "login";
-    }
-
     @GetMapping
     public String listUsers(Model model) {
         List<User> users = userService.getAllUsers();

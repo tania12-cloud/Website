@@ -1,19 +1,6 @@
 package com.example.springboot.model;
 
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-
-import java.util.HashSet;
+import jakarta.persistence.*;
 import java.util.Set;
 
 @Entity
@@ -29,65 +16,65 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private UserRole role;
+    private String role;
 
     @OneToMany(mappedBy = "assignee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Task> assignedTasks = new HashSet<>();
+    private Set<Task> tasks;
 
-    // Constructors, getters, and setters
+	public User(Long id, String username, String password, String role, Set<Task> tasks) {
+		super();
+		this.id = id;
+		this.username = username;
+		this.password = password;
+		this.role = role;
+		this.tasks = tasks;
+	}
 
-    public User() {
-    }
+	public User() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 
-    public User(String username, String password, UserRole role) {
-        this.username = username;
-        this.password = password;
-        this.role = role;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    // Getters and setters
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public String getUsername() {
+		return username;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public void setUsername(String username) {
+		this.username = username;
+	}
 
-    public String getUsername() {
-        return username;
-    }
+	public String getPassword() {
+		return password;
+	}
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+	public void setPassword(String password) {
+		this.password = password;
+	}
 
-    public String getPassword() {
-        return password;
-    }
+	public String getRole() {
+		return role;
+	}
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+	public void setRole(String role) {
+		this.role = role;
+	}
 
-    public UserRole getRole() {
-        return role;
-    }
+	public Set<Task> getTasks() {
+		return tasks;
+	}
 
-    public void setRole(UserRole role) {
-        this.role = role;
-    }
+	public void setTasks(Set<Task> tasks) {
+		this.tasks = tasks;
+	}
 
-    public Set<Task> getAssignedTasks() {
-        return assignedTasks;
-    }
-
-    public void setAssignedTasks(Set<Task> assignedTasks) {
-        this.assignedTasks = assignedTasks;
-    }
+   
 }
-
-

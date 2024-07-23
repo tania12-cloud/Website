@@ -1,7 +1,5 @@
 package com.example.springboot.config;
 
-
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -9,47 +7,52 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+
+import com.example.springboot.service.UserService;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
 
+	private final UserService userService;
+
+    public WebSecurityConfig(UserService userService) {
+        this.userService = userService;
+    }
+
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/users/login", "/home", "/users/register", "/css/**", "/js/**").permitAll()
-                .anyRequest().authenticated()
+            .authorizeHttpRequests(authorizeRequests ->
+                authorizeRequests
+                    .requestMatchers("/register", "/login", "/css/**","/images/**").permitAll()
+                    .anyRequest().authenticated()
             )
-            .formLogin(formLogin -> formLogin
-                .loginPage("/users/login")
-                .permitAll()
+            .formLogin(formLogin ->
+                formLogin
+                    .loginPage("/login")
+                    .defaultSuccessUrl("/", true)
             )
-            .logout(logout -> logout.permitAll());
+            .logout(logout ->
+            logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/login")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+            );
 
         return http.build();
     }
 
     @Bean
-    BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    UserDetailsService userDetailsService() {
-    	UserDetails user = User.withUsername("user")
-    	.password(passwordEncoder().encode("password"))
-    	.roles("USER")
-    	.build();
-    	
-    UserDetails admin = User.withUsername("admin")
-    	.password(passwordEncoder().encode("admin"))
-    	.roles("ADMIN")
-    	.build();
-    return new InMemoryUserDetailsManager(user,admin);
+    public UserDetailsService userDetailsService() {
+        return username -> userService.findByUsername(username)
+                                      .map(CustomUserDetails::new)
+                                      .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
     }
  }
 
